@@ -18,6 +18,9 @@ export class VideoPlayerComponent{
   constructor(private search: SearchService, private sanitizer: DomSanitizer) { 
     if(localStorage.getItem("urls")) {
       this.urls = JSON.parse(localStorage.getItem("urls") || "");
+      console.log(this.urls);
+      localStorage.setItem("urls", JSON.stringify(this.urls));
+      this.updateVideo(this.current);
     } else {
       this.fetchVideos(search,10);
     }
@@ -27,17 +30,14 @@ export class VideoPlayerComponent{
     search.getVideos("lofi",results).subscribe( 
       x =>{
         x.map( (x: { id: { videoId: string; }; }) => this.urls.push(x.id.videoId));
-        this.updateVideo(this.current);
-        console.log(this.urls);
-        localStorage.setItem("urls", JSON.stringify(this.urls));
         },
       
       error => {
         this.urls = this.hardCodedBackup;
         this.wasFailure = true;
-        this.updateVideo(this.current);
         console.log(this.urls);
         localStorage.setItem("urls", JSON.stringify(this.urls));
+        this.updateVideo(this.current);
       }
       );
   }
